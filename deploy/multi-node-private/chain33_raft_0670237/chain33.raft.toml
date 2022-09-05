@@ -1,0 +1,240 @@
+Title="local"
+version="1.65.2-613b8179"
+# 是否按照块高度设置过期时间，开启后优化了交易去重性能
+TxHeight=true
+CoinSymbol="raft" 
+
+[log]
+# 日志级别，支持debug(dbug)/info/warn/error(eror)/crit
+loglevel = "info"
+logConsoleLevel = "info"
+# 日志文件名，可带目录，所有生成的日志文件都放到此目录下
+logFile = "logs/chain33.log"
+# 单个日志文件的最大值（单位：兆）
+maxFileSize = 300
+# 最多保存的历史日志文件个数
+maxBackups = 100
+# 最多保存的历史日志消息（单位：天）
+maxAge = 28
+# 日志文件名是否使用本地事件（否则使用UTC时间）
+localTime = true
+# 历史日志文件是否压缩（压缩格式为gz）
+compress = true
+# 是否打印调用源文件和行号
+callerFile = false
+# 是否打印调用方法
+callerFunction = false
+
+[blockchain]
+# 缓存区块的个数
+defCacheSize=128
+# 同步区块时一次最多申请获取的区块个数
+maxFetchBlockNum=128
+# 向对端节点请求同步区块的时间间隔
+timeoutSeconds=5
+batchBlockNum=128
+driver="leveldb"
+dbPath="datadir"
+dbCache=128
+isStrongConsistency=false
+# 是否为单节点模式
+singleMode=false
+# 同步区块批量写数据库时，是否需要立即写磁盘，非固态硬盘的电脑可以设置为false，以提高性能
+batchsync=false
+# 是否记录添加或者删除区块的序列，若节点作为主链节点，为平行链节点提供服务，需要设置为true
+isRecordBlockSequence=true
+# 是否为平行链节点
+isParaChain=false
+# 是否开启交易快速查询索引
+enableTxQuickIndex=true
+# 是否开启精简localdb
+enableReExecLocal=false
+enablePushSubscribe=true
+# 对端节点只比自己高一个区块，等待超时后，同步该区块
+onChainTimeout=30
+# 是否关闭区块广播
+disableBlockBroadcast=true
+
+# <--- 数据分片相关参数 --->
+# 是否关闭分片功能
+disableShard=true
+# 每个分片包含的区块数
+chunkblockNum=100
+# 使能从P2pStore中获取数据
+enableFetchP2pstore=true
+highAllowPackHeight=300
+lowAllowPackHeight=200
+
+[p2p]
+# 配置p2p网络类型，dht,gossip两种
+types=["gossip"]
+dbPath="datadir/addrbook"
+dbCache=4
+grpcLogFile="grpc33.log"
+#waitPid 等待seed导入
+waitPid=false
+# 是否启动P2P服务
+enable=true
+driver="leveldb"
+
+[p2p.sub.gossip]
+port=13802
+seeds=["172.22.16.206:13802","172.22.16.5:13802","172.22.17.28:13802"]
+isSeed=true
+innerSeedEnable=false
+useGithub=false
+innerBounds=300
+channel=5288
+serverStart=true
+
+[rpc]
+jrpcBindAddr=":8801"
+grpcBindAddr=":8802"
+whitelist=["*"]
+jrpcFuncWhitelist=["*"]
+grpcFuncWhitelist=["*"]
+
+
+[mempool]
+# mempool队列存储策略名称，可配，timeline，score，price，默认timeline
+name="timeline"
+# mempool缓存容量大小，默认10240，不能超过maxTxNumber的10倍
+poolCacheSize=120000
+# 每个账户在mempool中得最大交易数量，默认100
+maxTxNumPerAccount=120000
+# 目前execCheck效率较低，支持关闭交易execCheck，提升性能，默认false
+disableExecCheck=true
+#minTxFeeRate=100000
+
+[consensus]
+name="raft"
+minerstart=true
+genesis="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
+genesisBlockTime=1514533394
+
+[mver.consensus]
+fundKeyAddr = "1BQXS6TxaYYG5mADaWij4AxhZZUTpw95a5"
+powLimitBits="0x1f00ffff"
+# 区块包含最多交易数
+maxTxNumber = 25000      #160
+
+[mver.consensus.ForkChainParamV1]
+# 区块包含最多交易数
+maxTxNumber = 25000
+
+[mver.consensus.ForkTicketFundAddrV1]
+fundKeyAddr = "1Ji3W12KGScCM7C2p8bg635sNkayDM8MGY"
+
+[consensus.sub.raft]
+#创世交易地址
+genesis="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
+#创世区块时间(UTC时间)
+genesisBlockTime=1514533394
+# 共识节点ID，不同的节点设置不同的nodeId（目前只支持1，2，3这种设置）
+nodeID=3
+# 通过这个端口进行节点的增加和删除
+raftAPIPort=9121
+# 指示这个节点是否新增加节点
+isNewJoinNode=false
+# 指示raft集群中的服务器IP和端口
+peersURL="http://172.22.16.206:9021,http://172.22.16.5:9021,http://172.22.17.28:9021"
+# 指示raft集群中只读节点的IP（只同步日志，不参与raft共识）
+readOnlyPeersURL=""
+#raft节点IP和端口,多个URL以","分割
+addPeersURL=""
+#默认raft中多少条记录打包一个snapshot
+defaultSnapCount=1000
+#默认raft中写区块时间间隔
+writeBlockSeconds=1
+#默认raft中leader发送心跳包时间间隔
+heartbeatTick=1
+
+[store]
+name="kvmvcc"
+driver="leveldb"
+dbPath="datadir/kvmvcc"
+dbCache=128
+
+[store.sub.kvmvcc]
+enableMavlPrefix=false
+enableMVCC=false
+
+[wallet]
+minFee=100000
+driver="leveldb"
+dbPath="datadir/wallet"
+dbCache=16
+signType="secp256k1"
+
+[wallet.sub.ticket]
+minerdisable=true
+minerwhitelist=["*"]
+
+[wallet.sub.multisig]
+rescanMultisigAddr=false
+
+[exec]
+enableStat=false
+enableMVCC=false
+alias=["token1:token","token2:token","token3:token"]
+saveTokenTxList=false
+disableAddrIndex=true
+disableTxIndex=false
+disableFeeIndex=false
+disableTxDupCheck=true
+
+[exec.sub.manage]
+superManager=["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"]
+
+[exec.sub.token]
+saveTokenTxList=true
+tokenApprs=[]
+
+[exec.sub.cert]
+enable=false
+cryptoPath="./test/authdir/crypto"
+signType="auth_sm2"
+
+[exec.sub.relay]
+genesis="12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
+
+[exec.sub.paracross]
+nodeGroupFrozenCoins=0
+#平行链共识停止后主链等待的高度
+paraConsensusStopBlocks=30000
+
+[exec.sub.autonomy]
+total="16htvcBNSEA7fZhAdLJphDwQRQJaHpyHTp"
+useBalance=false
+
+[exec.sub.evm]
+ethMapFromSymbol="coins.raft"
+#免交易费模式联盟链允许的最大gas，该配置只对不收取交易费部署方式有效，其他部署方式下该配置不会产生作用
+#当前最大为5000万
+evmGasLimit=50000000
+#evm内部调试输出，指令级的，默认关闭,0：关闭；1：打开
+evmDebugEnable=0
+
+[fork.sub.storage]
+Enable=0
+
+[fork.sub.evm]
+Enable=0
+
+[metrics]
+#是否使能发送metrics数据的发送
+enableMetrics=false
+#数据保存模式
+dataEmitMode="influxdb"
+
+[metrics.sub.influxdb]
+#以纳秒为单位的发送间隔
+duration=1000000000
+url="http://influxdb:8086"
+database="chain33metrics"
+username=""
+password=""
+namespace=""
+
+[pprof]
+listenAddr=":8803"

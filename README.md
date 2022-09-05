@@ -61,7 +61,13 @@ make
 $ make test
 ```
 
+## 源码分析
+```
+go get -u github.com/TrueFurby/go-callvis
+go-callvis [OPTIONS] <main package>
+go-callvis -group pkg,type  /home/ubuntu/go/src/github.com/zhangkai8048/chain33/cmd/chain33/main.go
 
+```
 ## 运行
 
 通过这个命令可以运行一个单节点到环境，可以用于开发测试
